@@ -1,9 +1,17 @@
 // components/Navbar.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { FiMenu, FiX } from "react-icons/fi";
+import { usePathname, useRouter } from "next/navigation";
+import { FiMenu, FiX, FiLogOut } from "react-icons/fi";
+import LogoutModal from "./LogoutModal";
+
+interface User {
+  id: number;
+  email: string;
+  name: string;
+}
 
 interface NavbarProps {
   activePage?: "home" | "paths" | "about" | "stories" | "faq";
@@ -11,6 +19,82 @@ interface NavbarProps {
 
 export default function Navbar({ activePage = "home" }: NavbarProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    const cachedUser = sessionStorage.getItem("codeforge_user");
+
+    if (cachedUser) {
+      setUser(JSON.parse(cachedUser));
+      setIsLoading(false);
+      return;
+    }
+
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/auth", {
+          credentials: "include",
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const userData = data.data.user;
+          setUser(userData);
+          sessionStorage.setItem("codeforge_user", JSON.stringify(userData));
+        } else {
+          setUser(null);
+          sessionStorage.removeItem("codeforge_user");
+        }
+      } catch {
+        setUser(null);
+        sessionStorage.removeItem("codeforge_user");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [pathname]);
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+
+    try {
+      const res = await fetch("/api/auth", {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        setUser(null);
+        sessionStorage.removeItem("codeforge_user");
+        setShowLogoutModal(false);
+        router.push("/");
+        router.refresh();
+      } else {
+        // Still clear local state
+        setUser(null);
+        sessionStorage.removeItem("codeforge_user");
+        setShowLogoutModal(false);
+        router.push("/");
+        router.refresh();
+      }
+    } catch (error) {
+      console.error("Logout error:", error);
+      setUser(null);
+      sessionStorage.removeItem("codeforge_user");
+      setShowLogoutModal(false);
+      router.push("/");
+      router.refresh();
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   const navLinks = [
     { href: "/paths", label: "Paths", key: "paths" },
@@ -39,18 +123,43 @@ export default function Navbar({ activePage = "home" }: NavbarProps) {
               {link.label}
             </Link>
           ))}
-          <Link
-            href="/login"
-            className="hover:text-red-600 transition"
-          >
-            Log in
-          </Link>
-          <Link
-            href="/register"
-            className="bg-red-600 text-white px-4 py-2 hover:bg-red-700 transition"
-          >
-            Get Started
-          </Link>
+
+          {!isLoading && (
+            <>
+              {user ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="hover:text-red-600 transition"
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => setShowLogoutModal(true)}
+                    className="flex items-center gap-1.5 text-red-600 hover:text-red-700 transition font-semibold"
+                  >
+                    <FiLogOut className="text-sm" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="hover:text-red-600 transition"
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="bg-red-600 text-white px-4 py-2 hover:bg-red-700 transition"
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
+            </>
+          )}
         </div>
 
         <button
@@ -77,22 +186,59 @@ export default function Navbar({ activePage = "home" }: NavbarProps) {
               {link.label}
             </Link>
           ))}
-          <Link
-            href="/login"
-            className="hover:text-red-600 transition py-1"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Log in
-          </Link>
-          <Link
-            href="/register"
-            className="bg-red-600 text-white px-4 py-2 text-center hover:bg-red-700 transition"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            Get Started
-          </Link>
+
+          {!isLoading && (
+            <>
+              {user ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="hover:text-red-600 transition py-1"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Dashboard
+                  </Link>
+                  <button
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setShowLogoutModal(true);
+                    }}
+                    className="flex items-center gap-1.5 text-red-600 hover:text-red-700 transition py-1 text-left"
+                  >
+                    <FiLogOut className="text-sm" />
+                    Logout
+                  </button>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/login"
+                    className="hover:text-red-600 transition py-1"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Log in
+                  </Link>
+                  <Link
+                    href="/register"
+                    className="bg-red-600 text-white px-4 py-2 text-center hover:bg-red-700 transition"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Get Started
+                  </Link>
+                </>
+              )}
+            </>
+          )}
         </div>
       )}
+
+      {/* Logout Modal */}
+      <LogoutModal
+        isOpen={showLogoutModal}
+        onClose={() => !isLoggingOut && setShowLogoutModal(false)}
+        onConfirm={handleLogout}
+        isLoggingOut={isLoggingOut}
+      />
     </>
   );
 }
