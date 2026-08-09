@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CodeForge — Black & White</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #ffffff;
+      color: #1a1a1a;
+      font-family: 'Space Grotesk', sans-serif;
+      padding: 0 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 10px 0 40px;
+    }
+
+    /* ─── TYPOGRAPHY ────────────────────────────────────────────── */
+    .serif {
+      font-family: 'DM Serif Display', serif;
+      font-weight: 400;
+    }
+    .serif-italic {
+      font-family: 'DM Serif Display', serif;
+      font-style: italic;
+    }
+    .label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #6b6b6b;
+      border-bottom: 1px solid #e5e5e5;
+      padding-bottom: 4px;
+      display: inline-block;
+    }
+
+    /* ─── NAV ────────────────────────────────────────────────────── */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 24px 0 16px;
+      border-bottom: 2px solid #e5e5e5;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+    .logo span { color: #dc2626; }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #4a4a4a;
+    }
+    .nav-links a { text-decoration: none; color: inherit; transition: 0.2s; }
+    .nav-links a:hover { color: #dc2626; }
+
+    .nav-cta {
+      background: #dc2626;
+      color: #ffffff !important;
+      padding: 8px 20px;
+      border-radius: 0;
+      font-weight: 700;
+    }
+    .nav-cta:hover { background: #b91c1c !important; color: #ffffff !important; }
+
+    /* ─── HERO ────────────────────────────────────────────────────── */
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      padding: 60px 0 70px;
+      align-items: center;
+      border-bottom: 2px solid #e5e5e5;
+    }
+
+    .hero h1 {
+      font-size: 4.6rem;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+    }
+    .hero h1 .highlight {
+      color: #dc2626;
+      font-style: italic;
+      background: #f3f3f3;
+      padding: 0 12px;
+      display: inline-block;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: #4a4a4a;
+      max-width: 440px;
+      margin-top: 20px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 14px 36px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: 0.15s;
+      text-decoration: none;
+      display: inline-block;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-primary:hover {
+      background: #b91c1c;
+      transform: translate(-3px, -3px);
+      box-shadow: 6px 6px 0 #e5e5e5;
+    }
+    .btn-secondary {
+      background: transparent;
+      color: #1a1a1a;
+      border: 2px solid #d1d5db;
+      padding: 14px 36px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: 0.15s;
+      text-decoration: none;
+      display: inline-block;
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    .btn-secondary:hover {
+      background: #f3f3f3;
+      border-color: #1a1a1a;
+    }
+
+    .hero-right {
+      border-left: 2px solid #e5e5e5;
+      padding-left: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .hero-right .big-quote {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.2rem;
+      line-height: 1.2;
+      color: #1a1a1a;
+    }
+    .hero-right .big-quote span { color: #dc2626; font-style: italic; }
+    .hero-right .attribution {
+      font-size: 0.8rem;
+      color: #6b6b6b;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hero-right .attribution .line {
+      flex: 1;
+      height: 1px;
+      background: #e5e5e5;
+    }
+
+    /* ─── STACK CARDS ────────────────────────────────────────────── */
+    .section-title {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      padding: 40px 0 12px;
+      border-bottom: 2px solid #e5e5e5;
+      margin-bottom: 40px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .section-title .label {
+      font-size: 0.7rem;
+      margin-bottom: 0;
+    }
+
+    .stack-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+      margin-bottom: 60px;
+    }
+    .stack-card {
+      background: #f9f9f9;
+      border: 1px solid #e5e5e5;
+      padding: 20px 12px;
+      text-align: center;
+      transition: 0.15s;
+    }
+    .stack-card:hover {
+      border-color: #dc2626;
+      background: #f3f3f3;
+    }
+    .stack-card .icon {
+      font-size: 2.2rem;
+      display: block;
+      margin-bottom: 4px;
+      color: #1a1a1a;
+    }
+    .stack-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+    .stack-card p {
+      font-size: 0.7rem;
+      color: #6b6b6b;
+      margin-top: 2px;
+    }
+
+    /* ─── FEATURES ────────────────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin: 40px 0 60px;
+    }
+    .feature-item {
+      background: #f9f9f9;
+      border: 1px solid #e5e5e5;
+      padding: 24px 20px;
+      transition: 0.15s;
+    }
+    .feature-item:hover {
+      border-color: #dc2626;
+    }
+    .feature-item .icon {
+      font-size: 1.8rem;
+      color: #dc2626;
+      margin-bottom: 8px;
+    }
+    .feature-item h4 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .feature-item p {
+      font-size: 0.9rem;
+      color: #4a4a4a;
+      margin-top: 6px;
+    }
+
+    /* ─── TESTIMONIALS ───────────────────────────────────────────── */
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 40px 0 60px;
+    }
+    .testimonial {
+      background: #f9f9f9;
+      border: 1px solid #e5e5e5;
+      padding: 24px 20px;
+    }
+    .testimonial .stars {
+      color: #dc2626;
+      font-size: 0.9rem;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+    .testimonial blockquote {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.1rem;
+      line-height: 1.4;
+      color: #1a1a1a;
+    }
+    .testimonial .author {
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-top: 1px solid #e5e5e5;
+      padding-top: 14px;
+    }
+    .testimonial .author .initials {
+      width: 36px;
+      height: 36px;
+      background: #e5e5e5;
+      color: #1a1a1a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+    .testimonial .author .name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .testimonial .author .role {
+      font-size: 0.7rem;
+      color: #6b6b6b;
+    }
+
+    /* ─── FAQ ────────────────────────────────────────────────────── */
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 32px;
+      margin: 40px 0 60px;
+    }
+    .faq-item {
+      border-bottom: 1px solid #e5e5e5;
+      padding: 16px 0;
+    }
+    .faq-item summary {
+      font-weight: 600;
+      font-size: 1.05rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      list-style: none;
+      color: #1a1a1a;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after {
+      content: "↘";
+      font-size: 1.2rem;
+      color: #dc2626;
+      transition: 0.2s;
+    }
+    .faq-item details[open] summary::after {
+      transform: rotate(90deg);
+    }
+    .faq-item p {
+      margin-top: 12px;
+      color: #4a4a4a;
+      font-size: 0.9rem;
+      padding-right: 20px;
+    }
+
+    /* ─── CTA ────────────────────────────────────────────────────── */
+    .cta-block {
+      border-top: 2px solid #e5e5e5;
+      border-bottom: 2px solid #e5e5e5;
+      padding: 50px 0;
+      margin: 40px 0 60px;
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+    .cta-block h2 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+    .cta-block h2 span { color: #dc2626; font-style: italic; }
+    .cta-block p {
+      color: #4a4a4a;
+      font-size: 1.05rem;
+      margin-top: 6px;
+    }
+    .cta-block .btn-group {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    /* ─── FOOTER ──────────────────────────────────────────────────── */
+    .footer {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 32px;
+      padding: 40px 0 20px;
+      border-top: 2px solid #e5e5e5;
+    }
+    .footer .brand p {
+      color: #6b6b6b;
+      font-size: 0.9rem;
+      margin-top: 6px;
+      max-width: 260px;
+    }
+    .footer .col h4 {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6b6b6b;
+      margin-bottom: 12px;
+    }
+    .footer .col a {
+      display: block;
+      color: #4a4a4a;
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 4px 0;
+    }
+    .footer .col a:hover { color: #dc2626; }
+    .footer-bottom {
+      border-top: 1px solid #e5e5e5;
+      padding-top: 20px;
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.75rem;
+      color: #6b6b6b;
+      letter-spacing: 0.02em;
+    }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; gap: 24px; padding: 40px 0; }
+      .hero-right { border-left: none; padding-left: 0; border-top: 2px solid #e5e5e5; padding-top: 24px; }
+      .stack-grid { grid-template-columns: repeat(3, 1fr); }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .testimonial-grid { grid-template-columns: 1fr 1fr; }
+      .cta-block { grid-template-columns: 1fr; text-align: center; }
+      .cta-block .btn-group { justify-content: center; }
+      .footer { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 640px) {
+      body { padding: 0 12px; }
+      .hero h1 { font-size: 3.2rem; }
+      .stack-grid { grid-template-columns: repeat(2, 1fr); }
+      .features-grid { grid-template-columns: 1fr; }
+      .testimonial-grid { grid-template-columns: 1fr; }
+      .faq-grid { grid-template-columns: 1fr; }
+      .footer { grid-template-columns: 1fr; }
+      .section-title { font-size: 1.8rem; flex-direction: column; gap: 6px; }
+      .nav-links { gap: 16px; font-size: 0.7rem; }
+      .btn-primary, .btn-secondary { padding: 10px 24px; font-size: 0.8rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- ═══ NAV ═══ -->
+    <nav class="nav">
+      <div class="logo">Code<span>Forge</span></div>
+      <div class="nav-links">
+        <a href="#paths">Paths</a>
+        <a href="#features">Features</a>
+        <a href="#testimonials">Stories</a>
+        <a href="#faq">FAQ</a>
+        <a href="#" class="nav-cta">Join</a>
+      </div>
+    </nav>
+
+    <!-- ═══ HERO ═══ -->
+    <section class="hero">
+      <div>
+        <div class="label">Led by Nour Yahyaoui</div>
+        <h1>
+          From <span class="highlight">HTML</span><br />
+          to <span class="highlight">Flutter</span>
+        </h1>
+        <p>
+          A free, project‑based platform where students build real applications,
+          get honest code reviews, and level up.
+        </p>
+        <div class="hero-actions">
+          <a href="#" class="btn-primary">Start Learning</a>
+          <a href="#" class="btn-secondary">Explore Paths</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="big-quote">
+          “Build <span>real</span> things,<br /> not todo apps.”
+        </div>
+        <div class="attribution">
+          <span class="line"></span> Nour Yahyaoui
+        </div>
+        <div style="display:flex; gap:12px; font-size:0.8rem; color:#6b6b6b; margin-top:8px;">
+          <span>✶ 100% free</span>
+          <span>✶ No credit card</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ STACK CARDS ═══ -->
+    <div id="paths">
+      <div class="section-title">
+        <span>Learning <span style="color:#dc2626;">Paths</span></span>
+        <span class="label">6 tracks</span>
+      </div>
+      <div class="stack-grid">
+        <div class="stack-card"><span class="icon"><i class="fab fa-html5"></i></span><h3>HTML + CSS</h3><p>Portfolio, responsive</p></div>
+        <div class="stack-card"><span class="icon"><i class="fab fa-js"></i></span><h3>JavaScript</h3><p>DOM, APIs, async</p></div>
+        <div class="stack-card"><span class="icon"><i class="fab fa-react"></i></span><h3>React</h3><p>Hooks, state, routing</p></div>
+        <div class="stack-card"><span class="icon"><i class="fab fa-node-js"></i></span><h3>Node.js</h3><p>Express, PostgreSQL</p></div>
+        <div class="stack-card"><span class="icon"><i class="fab fa-flutter"></i></span><h3>Flutter</h3><p>Dart, cross‑platform</p></div>
+        <div class="stack-card"><span class="icon"><i class="fab fa-react"></i></span><h3>React Native</h3><p>Mobile apps</p></div>
+      </div>
+    </div>
+
+    <!-- ═══ FEATURES ═══ -->
+    <div id="features">
+      <div class="section-title">
+        <span>Why <span style="color:#dc2626;">CodeForge?</span></span>
+        <span class="label">core pillars</span>
+      </div>
+      <div class="features-grid">
+        <div class="feature-item"><span class="icon"><i class="fas fa-bolt"></i></span><h4>Real Projects</h4><p>Not todo apps. Build systems people actually use — portfolios, blogs, e‑commerce, POS.</p></div>
+        <div class="feature-item"><span class="icon"><i class="fas fa-brain"></i></span><h4>Mentorship</h4><p>I review your code, guide architecture, and help you think like a senior engineer.</p></div>
+        <div class="feature-item"><span class="icon"><i class="fas fa-users"></i></span><h4>Community</h4><p>Learn with peers, showcase your work, and grow together in a supportive environment.</p></div>
+      </div>
+    </div>
+
+    <!-- ═══ TESTIMONIALS ═══ -->
+    <div id="testimonials">
+      <div class="section-title">
+        <span>Student <span style="color:#dc2626;">Stories</span></span>
+        <span class="label">real voices</span>
+      </div>
+      <div class="testimonial-grid">
+        <div class="testimonial">
+          <div class="stars">✦ ✦ ✦ ✦ ✦</div>
+          <blockquote>“I went from knowing nothing to building a full‑stack app in 8 weeks. The mentorship was incredible.”</blockquote>
+          <div class="author"><div class="initials">AB</div><div><div class="name">Ahmed Ben Ali</div><div class="role">Now full‑stack dev</div></div></div>
+        </div>
+        <div class="testimonial">
+          <div class="stars">✦ ✦ ✦ ✦ ✦</div>
+          <blockquote>“The platform is structured so well. Every project taught me something real. I landed a job before graduation.”</blockquote>
+          <div class="author"><div class="initials">SM</div><div><div class="name">Sara Mansour</div><div class="role">Junior developer</div></div></div>
+        </div>
+        <div class="testimonial">
+          <div class="stars">✦ ✦ ✦ ✦ ✦</div>
+          <blockquote>“Nour’s guidance on architecture and code quality changed how I think about development. Forever grateful.”</blockquote>
+          <div class="author"><div class="initials">YF</div><div><div class="name">Youssef Feki</div><div class="role">CS student</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ FAQ ═══ -->
+    <div id="faq">
+      <div class="section-title">
+        <span>Common <span style="color:#dc2626;">Questions</span></span>
+        <span class="label">quick answers</span>
+      </div>
+      <div class="faq-grid">
+        <details class="faq-item"><summary>Who is this platform for?</summary><p>Any student or beginner who wants to learn full‑stack development through real projects. No prior experience needed.</p></details>
+        <details class="faq-item"><summary>Is it really free?</summary><p>Yes! CodeForge is completely free for students. No hidden fees, no credit card required.</p></details>
+        <details class="faq-item"><summary>How does mentorship work?</summary><p>I review your code, give feedback on your projects, and help you with architecture decisions. Weekly Q&A sessions included.</p></details>
+        <details class="faq-item"><summary>What technologies will I learn?</summary><p>The full modern stack: HTML, CSS, JavaScript, React, Node.js, PostgreSQL, Flutter, and React Native.</p></details>
+      </div>
+    </div>
+
+    <!-- ═══ CTA ═══ -->
+    <div class="cta-block">
+      <div>
+        <h2>Ready to <span>build</span> your future?</h2>
+        <p>Start learning today. Zero cost. Real projects. Real mentorship.</p>
+      </div>
+      <div class="btn-group">
+        <a href="#" class="btn-primary">Start Learning</a>
+        <a href="#" class="btn-secondary" style="border-color:#d1d5db; color:#4a4a4a;">Contact</a>
+      </div>
+    </div>
+
+    <!-- ═══ FOOTER ═══ -->
+    <footer class="footer">
+      <div class="brand">
+        <div style="font-size:1.5rem; font-weight:700;">Code<span style="color:#dc2626;">Forge</span></div>
+        <p>A student‑led platform to learn full‑stack development through real projects and mentorship.</p>
+        <div style="display:flex; gap:12px; margin-top:12px; font-size:1.2rem; color:#6b6b6b;">
+          <a href="#" style="color:inherit;"><i class="fab fa-twitter"></i></a>
+          <a href="#" style="color:inherit;"><i class="fab fa-github"></i></a>
+          <a href="#" style="color:inherit;"><i class="fab fa-discord"></i></a>
+        </div>
+      </div>
+      <div class="col"><h4>Paths</h4><a href="#">HTML + CSS</a><a href="#">JavaScript</a><a href="#">React</a><a href="#">Node.js</a><a href="#">Flutter</a></div>
+      <div class="col"><h4>Resources</h4><a href="#">Documentation</a><a href="#">Projects</a><a href="#">Community</a><a href="#">FAQ</a></div>
+      <div class="col"><h4>Connect</h4><a href="#">About Nour</a><a href="#">YouTube</a><a href="#">LinkedIn</a><a href="#">Contact</a></div>
+    </footer>
+    <div class="footer-bottom">
+      &copy; 2026 CodeForge. Built with <span style="color:#dc2626;">♥</span> by Nour Yahyaoui.
+    </div>
+
+  </div>
+</body>
+</html>
