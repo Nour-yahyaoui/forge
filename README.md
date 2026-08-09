@@ -11,10 +11,10 @@ This platform exists to bridge the gap between academic knowledge and real‑wor
 ## 🧰 Tech Stack
 
 - **Frontend:** React, Next.js, Tailwind CSS
-- **Backend:** Node.js, Express
+- **Backend:** next.js APIs
 - **Database:** PostgreSQL (Neon)
 - **Mobile:** Flutter, React Native
-- **Deployment:** Vercel, Railway
+- **Deployment:** Vercel
 - **Auth:** JWT, bcrypt
 
 ## 📁 Project Structure
