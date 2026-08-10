@@ -16,6 +16,10 @@ import {
   FaDatabase,
   FaBrain,
   FaShieldAlt,
+  FaBolt,
+  FaAsterisk,
+  FaStar,
+  FaGraduationCap,
 } from "react-icons/fa";
 import {
   SiTypescript,
@@ -137,8 +141,10 @@ export default function Home() {
               Nour Yahyaoui
             </div>
             <div className="flex gap-4 text-sm text-gray-500 mt-2">
-              <span>✶ 100% free</span>
-              <span>✶ No credit card</span>
+              <FaAsterisk className="text-gray-400 text-xs" />
+              <span>100% free</span>
+              <FaAsterisk className="text-gray-400 text-xs" />
+              <span>No credit card</span>
             </div>
           </div>
         </section>
@@ -195,17 +201,17 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             <div className="bg-gray-50 border border-gray-200 p-5 md:p-6 hover:border-red-600 transition">
-              <div className="text-3xl mb-2">⚡</div>
+              <FaBolt className="text-3xl text-red-500 mb-2" />
               <h4 className="text-lg font-bold tracking-tight">Real Projects</h4>
               <p className="text-sm text-gray-600 mt-1.5">Not todo apps. Build systems people actually use — portfolios, blogs, e‑commerce, POS, and more.</p>
             </div>
             <div className="bg-gray-50 border border-gray-200 p-5 md:p-6 hover:border-red-600 transition">
-              <div className="text-3xl mb-2">🧠</div>
+              <FaBrain className="text-3xl text-purple-500 mb-2" />
               <h4 className="text-lg font-bold tracking-tight">Mentorship</h4>
               <p className="text-sm text-gray-600 mt-1.5">I review your code, guide architecture, and help you think like a senior engineer.</p>
             </div>
             <div className="bg-gray-50 border border-gray-200 p-5 md:p-6 hover:border-red-600 transition">
-              <div className="text-3xl mb-2">🛡️</div>
+              <FaShieldAlt className="text-3xl text-blue-500 mb-2" />
               <h4 className="text-lg font-bold tracking-tight">Production Mindset</h4>
               <p className="text-sm text-gray-600 mt-1.5">Rate limiting, caching, security, and scalability — not just code that works.</p>
             </div>
@@ -223,8 +229,10 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {testimonials.map((item) => (
               <div key={item.id} className="bg-gray-50 border border-gray-200 p-5 md:p-6">
-                <div className="text-red-600 text-sm tracking-widest mb-2">
-                  {"✦".repeat(item.stars)}
+                <div className="flex text-red-600 text-sm tracking-widest mb-2">
+                  {[...Array(item.stars)].map((_, i) => (
+                    <FaStar key={i} />
+                  ))}
                 </div>
                 <blockquote className="font-serif text-base md:text-lg leading-relaxed">
                   “{item.quote}”
