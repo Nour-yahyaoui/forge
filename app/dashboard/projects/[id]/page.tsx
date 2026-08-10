@@ -1,10 +1,25 @@
-// app/dashboard/projects/[id]/page.tsx
+// app/dashboard/p/[slug]/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { FaArrowLeft, FaGithub, FaUsers, FaCode, FaCopy } from "react-icons/fa";
+import {
+  FaArrowLeft,
+  FaGithub,
+  FaUsers,
+  FaCode,
+  FaCopy,
+  FaEdit,
+  FaCalendarAlt,
+  FaUser,
+  FaCrown,
+  FaLink,
+  FaExternalLinkAlt,
+  FaCheck,
+  FaClock,
+  FaShareAlt,
+} from "react-icons/fa";
 
 interface Member {
   id: number;
@@ -14,6 +29,7 @@ interface Member {
 
 interface Project {
   id: number;
+  slug: string;
   name: string;
   description: string;
   github_repo_url: string;
@@ -34,28 +50,28 @@ export default function ProjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  const projectId = params.id as string;
+  const slug = params.slug as string;
 
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const res = await fetch(`/api/projects/${projectId}`, {
+        const res = await fetch(`/api/projects/${slug}`, {
           credentials: "include",
         });
         if (res.ok) {
           const data = await res.json();
           setProject(data.data);
         } else {
-          router.push("/dashboard/projects");
+          router.push("/dashboard/p");
         }
       } catch {
-        router.push("/dashboard/projects");
+        router.push("/dashboard/p");
       } finally {
         setLoading(false);
       }
     };
     fetchProject();
-  }, [projectId, router]);
+  }, [slug, router]);
 
   const copyJoinCode = () => {
     if (!project) return;
@@ -65,94 +81,204 @@ export default function ProjectDetailPage() {
   };
 
   if (loading) {
-    return <p className="text-gray-500">Loading...</p>;
+    return (
+      <div className="flex items-center justify-center min-h-[200px]">
+        <div className="w-8 h-8 border-4 border-gray-200 border-t-red-600 rounded-full animate-spin"></div>
+      </div>
+    );
   }
 
   if (!project) {
-    return <p className="text-gray-500">Project not found</p>;
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-500">Project not found</p>
+        <Link href="/dashboard/p" className="text-red-600 hover:underline mt-2 inline-block">
+          Back to projects
+        </Link>
+      </div>
+    );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      <Link href="/dashboard/projects" className="text-gray-500 hover:text-gray-700 text-sm flex items-center gap-1 mb-4">
+    <div className="max-w-5xl mx-auto">
+      {/* Back button */}
+      <Link
+        href="/dashboard/p"
+        className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 text-sm mb-6 transition"
+      >
         <FaArrowLeft /> Back to projects
       </Link>
 
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+      {/* Main Card */}
+      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        {/* Header with gradient */}
+        <div className="bg-gradient-to-r from-red-600 to-red-500 px-6 py-5 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{project.name}</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              {project.is_owner ? "👑 Owner" : "📎 Member"} • Created {new Date(project.created_at).toLocaleDateString()}
-            </p>
+            <div className="flex items-center gap-3 flex-wrap">
+              <h1 className="text-2xl font-bold text-white">{project.name}</h1>
+              {project.is_owner ? (
+                <span className="inline-flex items-center gap-1 bg-white/20 text-white px-3 py-0.5 rounded-full text-xs font-semibold backdrop-blur-sm">
+                  <FaCrown className="text-yellow-300" /> Owner
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1 bg-white/20 text-white px-3 py-0.5 rounded-full text-xs font-semibold backdrop-blur-sm">
+                  <FaUser /> Member
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-4 mt-1.5 text-white/80 text-sm">
+              <span className="flex items-center gap-1.5">
+                <FaClock className="text-xs" />
+                Created {new Date(project.created_at).toLocaleDateString()}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <FaUsers className="text-xs" />
+                {project.members.length + 1} members
+              </span>
+            </div>
           </div>
           {project.is_owner && (
             <Link
-              href={`/dashboard/projects/${project.id}/edit`}
-              className="text-sm border border-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 transition"
+              href={`/dashboard/p/${project.slug}/edit`}
+              className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-medium transition backdrop-blur-sm border border-white/10"
             >
-              Edit Project
+              <FaEdit /> Edit Project
             </Link>
           )}
         </div>
 
-        {/* Join Code */}
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <FaCode className="text-gray-400" />
-              <span className="text-sm text-gray-500">Join Code:</span>
-              <span className="font-mono font-bold text-lg tracking-wider">{project.join_code}</span>
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* Join Code Section */}
+          <div className="bg-gradient-to-br from-gray-50 to-white rounded-xl border border-gray-100 p-5">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                  <FaCode className="text-red-500" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">Join Code</p>
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono font-bold text-xl tracking-wider text-gray-800">
+                      {project.join_code}
+                    </span>
+                    <button
+                      onClick={copyJoinCode}
+                      className="text-gray-400 hover:text-gray-600 transition flex items-center gap-1 text-sm"
+                    >
+                      {copied ? (
+                        <>
+                          <FaCheck className="text-green-500" /> Copied!
+                        </>
+                      ) : (
+                        <>
+                          <FaCopy /> Copy
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={copyJoinCode}
+                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium text-gray-600 transition"
+                >
+                  <FaShareAlt /> Share
+                </button>
+              </div>
             </div>
-            <button
-              onClick={copyJoinCode}
-              className="text-sm text-gray-500 hover:text-gray-700 transition flex items-center gap-1"
-            >
-              <FaCopy /> {copied ? "Copied!" : "Copy"}
-            </button>
+            <p className="text-xs text-gray-400 mt-3 pl-14">
+              Share this code with others to let them join the project
+            </p>
           </div>
-          <p className="text-xs text-gray-400 mt-2">
-            Share this code with others to let them join the project
-          </p>
-        </div>
 
-        {/* Description */}
-        {project.description && (
-          <div className="mb-6">
-            <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wider mb-2">Plan</h3>
-            <p className="text-gray-700 whitespace-pre-wrap">{project.description}</p>
-          </div>
-        )}
+          {/* Two column layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left: Description + GitHub */}
+            <div className="lg:col-span-2 space-y-6">
+              {/* Description */}
+              {project.description && (
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    Plan & Description
+                  </h3>
+                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-100">
+                    <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+                      {project.description}
+                    </p>
+                  </div>
+                </div>
+              )}
 
-        {/* GitHub */}
-        {project.github_repo_url && (
-          <div className="mb-6">
-            <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wider mb-2">GitHub Repository</h3>
-            <a
-              href={project.github_repo_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-red-600 hover:underline flex items-center gap-2"
-            >
-              <FaGithub /> {project.github_repo_url}
-            </a>
-          </div>
-        )}
+              {/* GitHub */}
+              {project.github_repo_url ? (
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    Repository
+                  </h3>
+                  <a
+                    href={project.github_repo_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-3 bg-gray-900 hover:bg-gray-800 text-white rounded-xl px-5 py-3 transition group"
+                  >
+                    <FaGithub className="text-xl" />
+                    <span className="font-medium">{project.github_repo_url.replace("https://github.com/", "")}</span>
+                    <FaExternalLinkAlt className="text-gray-400 group-hover:text-white transition text-sm" />
+                  </a>
+                </div>
+              ) : (
+                <div>
+                  <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                    Repository
+                  </h3>
+                  <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 text-gray-400 text-sm">
+                    No GitHub repository linked yet
+                  </div>
+                </div>
+              )}
+            </div>
 
-        {/* Members */}
-        <div>
-          <h3 className="font-semibold text-sm text-gray-500 uppercase tracking-wider mb-2 flex items-center gap-2">
-            <FaUsers /> Members ({project.members.length + 1})
-          </h3>
-          <div className="flex flex-wrap gap-2">
-            <span className="bg-gray-100 px-3 py-1 rounded-full text-sm flex items-center gap-1">
-              👑 {project.owner_name} (Owner)
-            </span>
-            {project.members.map((member) => (
-              <span key={member.id} className="bg-gray-100 px-3 py-1 rounded-full text-sm">
-                {member.name}
-              </span>
-            ))}
+            {/* Right: Members */}
+            <div>
+              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <FaUsers /> Members ({project.members.length + 1})
+              </h3>
+              <div className="bg-gray-50 rounded-xl p-4 border border-gray-100 space-y-2">
+                {/* Owner */}
+                <div className="flex items-center gap-3 bg-white rounded-lg px-3 py-2 border border-gray-100">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 to-yellow-500 flex items-center justify-center text-white text-xs font-bold">
+                    {project.owner_name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800">{project.owner_name}</p>
+                    <p className="text-xs text-gray-400">Owner</p>
+                  </div>
+                  <FaCrown className="text-yellow-400" />
+                </div>
+
+                {/* Members */}
+                {project.members.map((member) => (
+                  <div
+                    key={member.id}
+                    className="flex items-center gap-3 bg-white rounded-lg px-3 py-2 border border-gray-100"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-blue-500 flex items-center justify-center text-white text-xs font-bold">
+                      {member.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-800">{member.name}</p>
+                      <p className="text-xs text-gray-400">Member</p>
+                    </div>
+                  </div>
+                ))}
+
+                {project.members.length === 0 && (
+                  <p className="text-sm text-gray-400 text-center py-2">No members yet</p>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>
