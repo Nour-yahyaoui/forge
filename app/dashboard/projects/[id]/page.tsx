@@ -17,6 +17,8 @@ import {
   FaCheck,
   FaClock,
   FaExternalLinkAlt,
+  FaDownload,
+  FaSpinner,
 } from "react-icons/fa";
 
 interface Member {
@@ -46,6 +48,7 @@ export default function ProjectDetailPage() {
   const [project, setProject] = useState<Project | null>(null);
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   const projectId = params.id as string;
 
@@ -75,6 +78,67 @@ export default function ProjectDetailPage() {
     navigator.clipboard.writeText(project.join_code);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDownloadCode = async () => {
+    if (!project?.github_repo_url) return;
+
+    setDownloading(true);
+
+    try {
+      // Extract owner/repo from GitHub URL
+      const repoPath = project.github_repo_url.replace("https://github.com/", "").replace(/\/$/, "");
+      const [owner, repo] = repoPath.split("/");
+
+      if (!owner || !repo) {
+        alert("Invalid GitHub repository URL");
+        setDownloading(false);
+        return;
+      }
+
+      // Use GitHub's direct download API
+      const downloadUrl = `https://api.github.com/repos/${owner}/${repo}/zipball/main`;
+
+      // Fetch the zip file
+      const response = await fetch(downloadUrl);
+
+      if (!response.ok) {
+        // Try master branch if main fails
+        const fallbackUrl = `https://api.github.com/repos/${owner}/${repo}/zipball/master`;
+        const fallbackResponse = await fetch(fallbackUrl);
+
+        if (!fallbackResponse.ok) {
+          alert("Failed to download repository. Please check the URL or try again.");
+          setDownloading(false);
+          return;
+        }
+
+        const blob = await fallbackResponse.blob();
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${repo}.zip`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(link.href);
+        setDownloading(false);
+        return;
+      }
+
+      const blob = await response.blob();
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${repo}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("Download error:", error);
+      alert("Failed to download repository. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
   };
 
   if (loading) {
@@ -200,22 +264,44 @@ export default function ProjectDetailPage() {
                 </div>
               )}
 
-              {/* GitHub */}
+              {/* GitHub + Download */}
               {project.github_repo_url ? (
                 <div>
                   <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
                     Repository
                   </h3>
-                  <a
-                    href={project.github_repo_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-3 bg-gray-900 hover:bg-gray-800 text-white rounded-xl px-5 py-3 transition group"
-                  >
-                    <FaGithub className="text-xl" />
-                    <span className="font-medium">{project.github_repo_url.replace("https://github.com/", "")}</span>
-                    <FaExternalLinkAlt className="text-gray-400 group-hover:text-white transition text-sm" />
-                  </a>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <a
+                      href={project.github_repo_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-3 bg-gray-900 hover:bg-gray-800 text-white rounded-xl px-5 py-3 transition group flex-1 min-w-[200px]"
+                    >
+                      <FaGithub className="text-xl" />
+                      <span className="font-medium truncate">
+                        {project.github_repo_url.replace("https://github.com/", "")}
+                      </span>
+                      <FaExternalLinkAlt className="text-gray-400 group-hover:text-white transition text-sm ml-auto" />
+                    </a>
+
+                    {/* Download Code Button */}
+                    <button
+                      onClick={handleDownloadCode}
+                      disabled={downloading}
+                      className="inline-flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white font-medium rounded-xl transition shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {downloading ? (
+                        <>
+                          <FaSpinner className="animate-spin" />
+                          Downloading...
+                        </>
+                      ) : (
+                        <>
+                          <FaDownload /> Download Code
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div>
