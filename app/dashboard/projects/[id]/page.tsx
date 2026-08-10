@@ -1,4 +1,4 @@
-// app/dashboard/p/[slug]/page.tsx
+// app/dashboard/projects/[id]/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -14,11 +14,9 @@ import {
   FaCalendarAlt,
   FaUser,
   FaCrown,
-  FaLink,
-  FaExternalLinkAlt,
   FaCheck,
   FaClock,
-  FaShareAlt,
+  FaExternalLinkAlt,
 } from "react-icons/fa";
 
 interface Member {
@@ -29,7 +27,6 @@ interface Member {
 
 interface Project {
   id: number;
-  slug: string;
   name: string;
   description: string;
   github_repo_url: string;
@@ -50,28 +47,28 @@ export default function ProjectDetailPage() {
   const [loading, setLoading] = useState(true);
   const [copied, setCopied] = useState(false);
 
-  const slug = params.slug as string;
+  const projectId = params.id as string;
 
   useEffect(() => {
     const fetchProject = async () => {
       try {
-        const res = await fetch(`/api/projects/${slug}`, {
+        const res = await fetch(`/api/projects/${projectId}`, {
           credentials: "include",
         });
         if (res.ok) {
           const data = await res.json();
           setProject(data.data);
         } else {
-          router.push("/dashboard/p");
+          router.push("/dashboard/projects");
         }
       } catch {
-        router.push("/dashboard/p");
+        router.push("/dashboard/projects");
       } finally {
         setLoading(false);
       }
     };
     fetchProject();
-  }, [slug, router]);
+  }, [projectId, router]);
 
   const copyJoinCode = () => {
     if (!project) return;
@@ -92,7 +89,7 @@ export default function ProjectDetailPage() {
     return (
       <div className="text-center py-12">
         <p className="text-gray-500">Project not found</p>
-        <Link href="/dashboard/p" className="text-red-600 hover:underline mt-2 inline-block">
+        <Link href="/dashboard/projects" className="text-red-600 hover:underline mt-2 inline-block">
           Back to projects
         </Link>
       </div>
@@ -103,7 +100,7 @@ export default function ProjectDetailPage() {
     <div className="max-w-5xl mx-auto">
       {/* Back button */}
       <Link
-        href="/dashboard/p"
+        href="/dashboard/projects"
         className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700 text-sm mb-6 transition"
       >
         <FaArrowLeft /> Back to projects
@@ -139,7 +136,7 @@ export default function ProjectDetailPage() {
           </div>
           {project.is_owner && (
             <Link
-              href={`/dashboard/p/${project.slug}/edit`}
+              href={`/dashboard/projects/${project.id}/edit`}
               className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-xl text-sm font-medium transition backdrop-blur-sm border border-white/10"
             >
               <FaEdit /> Edit Project
@@ -178,14 +175,6 @@ export default function ProjectDetailPage() {
                     </button>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={copyJoinCode}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs font-medium text-gray-600 transition"
-                >
-                  <FaShareAlt /> Share
-                </button>
               </div>
             </div>
             <p className="text-xs text-gray-400 mt-3 pl-14">
