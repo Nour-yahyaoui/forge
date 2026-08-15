@@ -1,4 +1,4 @@
-# CodeForge — Student Learning Platform
+# CodeForge, Student Learning Platform
 
 A free, project‑based platform where students learn full‑stack development by building real applications. Led by Nour Yahyaoui.
 
